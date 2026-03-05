@@ -1,0 +1,28 @@
+async approve(requestId: string, adminId: string) {
+  return this.dataSource.transaction(async (manager) => {
+    const request = await manager.findOne(PermissionRequest, {
+      where: { id: requestId },
+    });
+
+    if (!request || request.status !== 'PENDING')
+      throw new BadRequestException();
+
+    const doc = await manager.findOne(Document, {
+      where: { id: request.documentId },
+      lock: { mode: 'pessimistic_write' },
+    });
+
+    if (!doc) throw new NotFoundException();
+
+    if (request.requestType === 'DELETE') {
+      await manager.remove(doc);
+    }
+
+    request.status = 'APPROVED';
+    request.approvedBy = adminId;
+
+    await manager.save(request);
+
+    return { message: 'Approved successfully' };
+  });
+}
