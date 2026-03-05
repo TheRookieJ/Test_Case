@@ -1,0 +1,8 @@
+@OnEvent('document.delete.requested')
+handleEvent(payload) {
+  this.notificationRepo.save({
+    userId: payload.adminId,
+    title: 'Delete Request',
+    message: 'A document requires approval',
+  });
+}
