@@ -1,0 +1,33 @@
+@Entity('documents')
+export class Document {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  title: string;
+
+  @Column()
+  description: string;
+
+  @Column()
+  documentType: string;
+
+  @Column()
+  fileUrl: string;
+
+  @VersionColumn()
+  version: number;
+
+  @Column({
+    type: 'enum',
+    enum: ['ACTIVE', 'PENDING_DELETE', 'PENDING_REPLACE'],
+    default: 'ACTIVE',
+  })
+  status: 'ACTIVE' | 'PENDING_DELETE' | 'PENDING_REPLACE';
+
+  @Column()
+  createdBy: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}
