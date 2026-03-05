@@ -1,0 +1,27 @@
+@Entity('permission_requests')
+export class PermissionRequest {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  documentId: string;
+
+  @Column({ type: 'enum', enum: ['DELETE', 'REPLACE'] })
+  requestType: 'DELETE' | 'REPLACE';
+
+  @Column({
+    type: 'enum',
+    enum: ['PENDING', 'APPROVED', 'REJECTED'],
+    default: 'PENDING',
+  })
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+
+  @Column()
+  requestedBy: string;
+
+  @Column({ nullable: true })
+  approvedBy: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}
