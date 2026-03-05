@@ -1,0 +1,20 @@
+async findAll(page = 1, limit = 10, search?: string) {
+  const qb = this.repo.createQueryBuilder('doc');
+
+  if (search) {
+    qb.where('doc.title ILIKE :search', { search: `%${search}%` });
+  }
+
+  qb.skip((page - 1) * limit)
+    .take(limit)
+    .orderBy('doc.createdAt', 'DESC');
+
+  const [data, total] = await qb.getManyAndCount();
+
+  return {
+    data,
+    total,
+    page,
+    lastPage: Math.ceil(total / limit),
+  };
+}
