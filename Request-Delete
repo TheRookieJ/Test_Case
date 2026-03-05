@@ -1,0 +1,18 @@
+async requestDelete(documentId: string, userId: string) {
+  const doc = await this.repo.findOne({ where: { id: documentId } });
+  if (!doc) throw new NotFoundException();
+
+  if (doc.status !== 'ACTIVE')
+    throw new BadRequestException('Document already locked');
+
+  doc.status = 'PENDING_DELETE';
+  await this.repo.save(doc);
+
+  await this.permissionRepo.save({
+    documentId,
+    requestType: 'DELETE',
+    requestedBy: userId,
+  });
+
+  return { message: 'Delete request submitted' };
+}
